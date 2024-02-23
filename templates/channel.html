@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Channel {{ channel.name }}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        a {
+            color: #007aff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+        .chat-bubble {
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            max-width: 100%;
+            word-wrap: break-word;
+            background-color: #ffffff;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+        .user-bubble {
+            align-self: flex-start;
+        }
+        .sender-bubble {
+            align-self: flex-end;
+            background-color: #007aff;
+            color: #ffffff;
+        }
+        h1, h2 {
+            margin-top: 0;
+        }
+        h2 {
+            font-size: 1rem;
+            font-weight: normal;
+            color: #666;
+        }
+        p {
+            font-size: 0.9rem;
+        }
+        .timestamp {
+            font-size: 0.75rem;
+            color: #999;
+        }
+        form {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 10px;
+            width: calc(100% - 24px);
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            background-color: #007aff;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="submit"]:hover {
+            background-color: #005ecb;
+        }
+        .chat-sender {
+            font-style: italic;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <p>The distributed messenger. <a href="{{ url_for('home_page') }}">List of channels.</a></p>
+    {% if channel %}
+        <h1>Channel {{ channel.name }}</h1>
+
+        {% for message in messages|reverse %}
+            <div class="chat-bubble {{ 'sender-bubble' if message.sender == 'OpenAI' else 'user-bubble' }}">
+                <h2 class="chat-sender">{{ message.sender }}</h2>
+                <p>{{ message.content }}</p>
+                <p class="timestamp">{{ message.timestamp }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1>Channel not found</h1>
+    {% endif %}
+</div>
+
+<form action="post" method="post">
+    <input type="hidden" name="channel" value="{{ channel.endpoint | urlencode }}">
+    <input style="display: none" type="text" name="sender" content="none" id="sender"><br>
+    <input type="text" name="content" id="content"><br>
+    <input style="display: none" type="submit" value="Post">
+</form>
+
+</body>
+</html>
